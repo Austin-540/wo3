@@ -62,6 +62,7 @@ export const MessageComponent = ({ node, updateAttributes }) => {
                 ...messages,
                 {
                     side,
+                    id: crypto.randomUUID(),
                     text: "New message...",
                 },
             ],
@@ -71,8 +72,6 @@ export const MessageComponent = ({ node, updateAttributes }) => {
     const removeMessage = (index) => {
         const updatedMessages = messages.filter((_, i) => i !== index);
         updateAttributes({ messages: updatedMessages });
-        // Clean up refs
-        messageRefs.current.splice(index, 1);
     };
 
     const handleImageSrcChange = () => {
@@ -143,7 +142,7 @@ export const MessageComponent = ({ node, updateAttributes }) => {
                 <div>
                     {messages.map((msg, i) => (
                         <div
-                            key={i}
+                            key={msg.id}
                             style={{
                                 display: "flex",
                                 justifyContent:

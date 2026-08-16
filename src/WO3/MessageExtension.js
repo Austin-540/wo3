@@ -13,8 +13,8 @@ export const MessageExtension = Node.create({
             profileImageSrc: { default: "" },
             messages: {
                 default: [
-                    { side: "left", text: "Hello!" },
-                    { side: "right", text: "Hi there!" },
+                    { side: "left", text: "Hello!", id: crypto.randomUUID() },
+                    { side: "right", text: "Hi there!", id: crypto.randomUUID() },
                 ],
                 parseHTML: (element) => {
                     const attr = element.getAttribute("messages");
