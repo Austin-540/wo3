@@ -122,14 +122,13 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
 
     const addMessage = (personId) => {
         updateAttributes({
-            messages: [...messages, { personId, text: "New message..." }],
+            messages: [...messages, { personId, text: "New message...", id: crypto.randomUUID() }],
         });
     };
 
     const removeMessage = (index) => {
         const updatedMessages = messages.filter((_, i) => i !== index);
         updateAttributes({ messages: updatedMessages });
-        messageRefs.current.splice(index, 1);
     };
 
     const getPerson = (personId) => people.find((p) => p.id === personId);
@@ -379,7 +378,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
 
                         return (
                             <div
-                                key={i}
+                                key={msg.id}
                                 style={{ marginBottom: "16px", position: "relative" }}
                                 onMouseEnter={(e) => {
                                     const deleteBtn = e.currentTarget.querySelector(".delete-btn");

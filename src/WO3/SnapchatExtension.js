@@ -40,9 +40,9 @@ export const SnapchatExtension = Node.create({
             },
             messages: {
                 default: [
-                    { personId: "1", text: "Hey everyone! 👋" },
-                    { personId: "2", text: "What's up?" },
-                    { personId: "1", text: "Just chilling, you?" },
+                    { personId: "1", text: "Hey everyone! 👋", id: crypto.randomUUID() },
+                    { personId: "2", text: "What's up?", id: crypto.randomUUID() },
+                    { personId: "1", text: "Just chilling, you?", id: crypto.randomUUID() },
                 ],
                 parseHTML: (element) => {
                     const attr = element.getAttribute("messages");
