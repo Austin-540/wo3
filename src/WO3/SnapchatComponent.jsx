@@ -131,7 +131,10 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         updateAttributes({ messages: updatedMessages });
     };
 
-    const getPerson = (personId) => people.find((p) => p.id === personId);
+    const getPerson = (personId) => {
+        if (personId === "!system") return { id: "!system", name: "System", color: "#000", profileImageSrc: "" };
+        return people.find((p) => p.id === personId);
+    };
 
     return (
         <NodeViewWrapper
@@ -344,6 +347,82 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                         const person = getPerson(msg.personId);
                         if (!person) return null;
 
+
+                        if (msg.personId == "!system") {
+                            return (
+                                <div
+                                    key={msg.id}
+                                    style={{ marginBottom: "16px", position: "relative" }}
+                                    onMouseEnter={(e) => {
+                                        const deleteBtn = e.currentTarget.querySelector(".delete-btn");
+                                        if (deleteBtn) deleteBtn.style.opacity = "1";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        const deleteBtn = e.currentTarget.querySelector(".delete-btn");
+                                        if (deleteBtn) deleteBtn.style.opacity = "0";
+                                    }}
+                                >
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() => removeMessage(i)}
+                                        style={{
+                                            position: "absolute",
+                                            top: "20px",
+                                            right: "8px",
+                                            background: "#ff4444",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            width: "18px",
+                                            height: "18px",
+                                            minWidth: "18px",
+                                            minHeight: "18px",
+                                            cursor: "pointer",
+                                            fontSize: "10px",
+                                            opacity: "0",
+                                            transition: "opacity 0.2s",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            zIndex: 1,
+                                            lineHeight: "1",
+                                            padding: "0",
+                                        }}
+                                        title="Delete system message"
+                                    >
+                                        ×
+                                    </button>
+
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "8px",
+                                            fontWeight: "bold"
+                                        }}
+                                    >
+                                        <div style={{ position: "relative", maxWidth: "70%" }}>
+                                            <div
+                                                ref={(el) => (messageRefs.current[i] = el)}
+                                                contentEditable
+                                                suppressContentEditableWarning
+                                                onBlur={() => handleMessageBlur(i)}
+                                                style={{
+                                                    background: "#FFF",
+                                                    color: "#000",
+                                                    padding: "8px 12px",
+                                                    borderRadius: "18px",
+                                                    outline: "none",
+                                                    wordWrap: "break-word",
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
+
                         return (
                             <div
                                 key={msg.id}
@@ -466,6 +545,23 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                 Add message from:
                             </div>
                             <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                                <button
+                                    key={"!system"}
+                                    onClick={() => addMessage("!system")}
+                                    style={{
+                                        background: "#333",
+                                        border: "none",
+                                        borderRadius: "12px",
+                                        padding: "4px 8px",
+                                        cursor: "pointer",
+                                        fontSize: "10px",
+                                        color: "#EEE",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    + System Message
+                                </button>
+
                                 {people.map((person) => (
                                     <button
                                         key={person.id}

@@ -2,6 +2,11 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { SnapchatComponent } from "./SnapchatComponent";
 
+function getPerson(personId, people) {
+    if (personId === "!system") return { id: "!system", name: "System", color: "#000", profileImageSrc: "" };
+    return people.find((p) => p.id === personId);
+};
+
 export const SnapchatExtension = Node.create({
     name: "snapchat",
     group: "block",
@@ -63,6 +68,8 @@ export const SnapchatExtension = Node.create({
         return [{ tag: "div.snapchat-wrapper" }];
     },
 
+
+
     renderHTML({ HTMLAttributes, node }) {
         const { groupName, groupIcon, people, messages } = node.attrs;
 
@@ -89,8 +96,25 @@ export const SnapchatExtension = Node.create({
 
         const messageElements = (messages || [])
             .map((msg) => {
-                const person = people.find((p) => p.id === msg.personId);
+
+                const person = getPerson(msg.personId, people);
                 if (!person) return null;
+
+                if (msg.personId === "!system") return [
+                    "div",
+                    {
+                        class: "sc-message",
+                        style: `justify-content: center;`
+                    },
+                    [
+                        "div",
+                        {
+                            class: "sc-msg-bubble",
+                            style: `background-color: "#FFF"; font-weight: bold;`,
+                        },
+                        msg.text,
+                    ],
+                ]
 
                 return [
                     "div",
