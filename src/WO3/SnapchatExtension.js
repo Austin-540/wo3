@@ -21,13 +21,13 @@ export const SnapchatExtension = Node.create({
                     {
                         id: "1",
                         name: "Alice",
-                        color: "#FF6B6B",
+                        color: "#FFDDDD",
                         profileImageSrc: "",
                     },
                     {
                         id: "2",
                         name: "Bob",
-                        color: "#4ECDC4",
+                        color: "#FFDFFF",
                         profileImageSrc: "",
                     },
                 ],

@@ -98,6 +98,11 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         }
     };
 
+    const getNextPersonColor = () => {
+        const presetColors = ["#FFDDDD", "#FFDFFF", "#DDFFEE", "#CCDDFF", "#C7E7F8", "#FFE2C8", "#FFFBD5", "#CCD0D7", "#CEFFFF", "#E3E1C8"];
+        return presetColors[people.length % presetColors.length];
+    };
+
     const addPerson = () => {
         const newId = Date.now().toString();
         updateAttributes({
@@ -106,7 +111,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                 {
                     id: newId,
                     name: "New Person",
-                    color: "#FF6B6B",
+                    color: getNextPersonColor(),
                     profileImageSrc: "",
                 },
             ],

@@ -160,7 +160,7 @@ export default function ComponentInsertModal({ onInsert, onClose }) {
                         }} />
                         <div style={{ position: "relative" }}>
                             <div style={{
-                                background: "#FF6B6B",
+                                background: "#FFDDDD",
                                 color: "#000",
                                 padding: "6px 10px",
                                 borderRadius: "12px 12px 12px 3px",
@@ -182,7 +182,7 @@ export default function ComponentInsertModal({ onInsert, onClose }) {
                         }} />
                         <div style={{ position: "relative" }}>
                             <div style={{
-                                background: "#4ECDC4",
+                                background: "#FFDFFF",
                                 color: "#000",
                                 padding: "6px 10px",
                                 borderRadius: "12px 12px 12px 3px",
