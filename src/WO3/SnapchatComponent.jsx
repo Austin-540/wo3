@@ -335,39 +335,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                         </button>
                     </div>
 
-                    {people.length > 0 && (
-                        <div>
-                            <div
-                                style={{
-                                    fontSize: "12px",
-                                    marginBottom: "6px",
-                                    color: "#666",
-                                }}
-                            >
-                                Add message from:
-                            </div>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                                {people.map((person) => (
-                                    <button
-                                        key={person.id}
-                                        onClick={() => addMessage(person.id)}
-                                        style={{
-                                            background: person.color,
-                                            border: "none",
-                                            borderRadius: "12px",
-                                            padding: "4px 8px",
-                                            cursor: "pointer",
-                                            fontSize: "10px",
-                                            color: "#000",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        + {person.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+
                 </div>
 
                 {/* Messages */}
@@ -474,6 +442,50 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                             </div>
                         );
                     })}
+                </div>
+
+                <div
+                    style={{
+                        marginBottom: "16px",
+                        padding: "12px",
+                        background: "#f8f9fa",
+                        borderRadius: "8px",
+                        border: "1px solid #e9ecef",
+                    }}
+                >
+                    {people.length > 0 && (
+                        <div>
+                            <div
+                                style={{
+                                    fontSize: "12px",
+                                    marginBottom: "6px",
+                                    color: "#666",
+                                }}
+                            >
+                                Add message from:
+                            </div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                                {people.map((person) => (
+                                    <button
+                                        key={person.id}
+                                        onClick={() => addMessage(person.id)}
+                                        style={{
+                                            background: person.color,
+                                            border: "none",
+                                            borderRadius: "12px",
+                                            padding: "4px 8px",
+                                            cursor: "pointer",
+                                            fontSize: "10px",
+                                            color: "#000",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        + {person.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </NodeViewWrapper>
