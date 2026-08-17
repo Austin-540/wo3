@@ -444,16 +444,17 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                     })}
                 </div>
 
-                <div
-                    style={{
-                        marginBottom: "16px",
-                        padding: "12px",
-                        background: "#f8f9fa",
-                        borderRadius: "8px",
-                        border: "1px solid #e9ecef",
-                    }}
-                >
-                    {people.length > 0 && (
+
+                {people.length > 0 && (
+                    <div
+                        style={{
+                            marginBottom: "16px",
+                            padding: "12px",
+                            background: "#f8f9fa",
+                            borderRadius: "8px",
+                            border: "1px solid #e9ecef",
+                        }}
+                    >
                         <div>
                             <div
                                 style={{
@@ -485,8 +486,9 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                 ))}
                             </div>
                         </div>
-                    )}
-                </div>
+
+                    </div>
+                )}
             </div>
         </NodeViewWrapper>
     );
