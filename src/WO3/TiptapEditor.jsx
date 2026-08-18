@@ -764,6 +764,21 @@ p h1 h2 h3 span {
 /* Resizable image wrapper (width comes from dynamic classes) */
 .resizable-image-wrapper{line-height:0;margin:10px 0;}
 
+.typing-indicator-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80px;
+  height: 40px;
+}
+
+.typing-indicator-circle {
+  width: 15px;
+  height: 15px;
+  background-color: #FFF;
+  border-radius: 50%;
+}
+
 `.trim();
 }
 

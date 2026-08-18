@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
+import DOMPurify from "dompurify";
 
 const BubbleTail = ({ side, color }) => {
     const tailStyle = {
@@ -86,7 +87,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                 messageRefs.current[i].innerText = msg.text;
             }
         });
-    }, []);
+    }, [messages, groupName, people]);
 
     const handleGroupNameBlur = () => {
         updateAttributes({ groupName: groupNameRef.current.innerText });
@@ -190,14 +191,17 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         })
     }
 
-    const changeMessageToHtml = (i) => {
+    const changeMessageToHtml = (i, newHtml) => {
+
+
         updateAttributes({
             messages: messages.map((msg, j) => {
                 if (i === j) {
+                    newHtml ??= (msg.text === "" || msg.text === "New message...") ?
+                        "Click to edit HTML" : msg.text
                     return {
                         personId: msg.personId,
-                        text: (msg.text === "" || msg.text === "New message...") ? 
-                            "Click to edit HTML": msg.text,
+                        text: newHtml,
                         id: msg.id,
                         useHtml: true
                     };
@@ -212,6 +216,10 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         if (!imageUrl || imageUrl === "") return;
 
         changeMessageToHtml(i, `<img src="${imageUrl}">`)
+    }
+
+    const changeMessageToTypingIndicator = (i) => {
+        changeMessageToHtml(i, '<div class="typing-indicator-container" style="display: flex;justify-content: space-around;align-items: center;width: 80px;height:40px;"><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div></div>'); 
     }
 
     return (
@@ -571,7 +579,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
 
                                                 <div
                                                     ref={(el) => (messageRefs.current[i] = el)}
-                                                    dangerouslySetInnerHTML={{ __html: msg.text }} //Potential vulnerability for XSS
+                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.text) }} 
                                                     onBlur={() => handleMessageBlur(i)}
                                                     style={{
                                                         background: person.color,
@@ -599,17 +607,21 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                     const deleteBtn = e.currentTarget.querySelector(".delete-btn");
                                     const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn")
                                     const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
+                                    const makeTypingIndicatorBtn = e.currentTarget.querySelector(".make-typing-indicator-btn");
                                     if (deleteBtn) deleteBtn.style.opacity = "1";
                                     if (makeHtmlBtn) makeHtmlBtn.style.opacity = "1";
                                     if (makeImageBtn) makeImageBtn.style.opacity = "1";
+                                    if (makeTypingIndicatorBtn) makeTypingIndicatorBtn.style.opacity = "1";
                                 }}
                                 onMouseLeave={(e) => {
                                     const deleteBtn = e.currentTarget.querySelector(".delete-btn");
                                     const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn");
                                     const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
+                                    const makeTypingIndicatorBtn = e.currentTarget.querySelector(".make-typing-indicator-btn");
                                     if (deleteBtn) deleteBtn.style.opacity = "0";
                                     if (makeHtmlBtn) makeHtmlBtn.style.opacity = "0";
                                     if (makeImageBtn) makeImageBtn.style.opacity = "0";
+                                    if (makeTypingIndicatorBtn) makeTypingIndicatorBtn.style.opacity = "0";
                                 }}
                             >
                                 <MessageButton
@@ -635,10 +647,20 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                 <MessageButton
                                     color="#292169"
                                     onClick={changeMessageToImage}
-                                    rightOffset="54px"
+                                    rightOffset="52px"
                                     buttonClass="make-image-btn"
                                     tooltip="Change to image"
                                     buttonText="🎆"
+                                    i={i}
+                                />
+
+                                <MessageButton
+                                    color="#565557"
+                                    onClick={changeMessageToTypingIndicator}
+                                    rightOffset="74px"
+                                    buttonClass="make-typing-indicator-btn"
+                                    tooltip="Change to typing indicator"
+                                    buttonText="💬"
                                     i={i}
                                 />
 
