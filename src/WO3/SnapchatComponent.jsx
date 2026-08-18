@@ -127,7 +127,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
 
     const addMessage = (personId) => {
         updateAttributes({
-            messages: [...messages, { personId, text: "New message...", id: crypto.randomUUID() }],
+            messages: [...messages, { personId, text: "New message...", id: crypto.randomUUID(), useHtml: false }],
         });
     };
 
@@ -140,6 +140,43 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         if (personId === "!system") return { id: "!system", name: "System", color: "#000", profileImageSrc: "" };
         return people.find((p) => p.id === personId);
     };
+
+    const editHtmlMessage = (i) => {
+        const newHtml = prompt("Update HTML message:", messages[i].text || "")
+        if (newHtml == null || newHtml === "") return;
+
+        updateAttributes({
+            messages: messages.map((msg, j) => {
+                if (i === j) {
+                    return { personId: msg.personId, text: newHtml, id: msg.id, useHtml: true };
+                }
+                return msg
+            })
+        })
+    }
+
+    const changeMessageToHtml = (i, newHtml) => {
+        updateAttributes({
+            messages: messages.map((msg, j) => {
+                if (i === j) {
+                    return {
+                        personId: msg.personId,
+                        text: newHtml,
+                        id: msg.id,
+                        useHtml: true
+                    };
+                }
+                return msg
+            })
+        })
+    }
+
+    const changeMessageToImage = (i) => {
+        const imageUrl = prompt("Enter image URL:\n(this will replace the selected message's text)");
+        if (!imageUrl || imageUrl === "") return;
+
+        changeMessageToHtml(i, `<img src="${imageUrl}">`)
+    }
 
     return (
         <NodeViewWrapper
@@ -428,17 +465,136 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                             );
                         }
 
+                        if (msg.useHtml) {
+                            return (
+                                <div
+                                    key={msg.id}
+                                    style={{ marginBottom: "16px", position: "relative" }}
+                                    onMouseEnter={(e) => {
+                                        const deleteBtn = e.currentTarget.querySelector(".delete-btn");
+                                        if (deleteBtn) deleteBtn.style.opacity = "1";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        const deleteBtn = e.currentTarget.querySelector(".delete-btn");
+                                        if (deleteBtn) deleteBtn.style.opacity = "0";
+                                    }}
+                                >
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() => removeMessage(i)}
+                                        style={{
+                                            position: "absolute",
+                                            top: "20px",
+                                            right: "8px",
+                                            background: "#ff4444",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            width: "18px",
+                                            height: "18px",
+                                            minWidth: "18px",
+                                            minHeight: "18px",
+                                            cursor: "pointer",
+                                            fontSize: "10px",
+                                            opacity: "0",
+                                            transition: "opacity 0.2s",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            zIndex: 1,
+                                            lineHeight: "1",
+                                            padding: "0",
+                                        }}
+                                        title="Delete message"
+                                    >
+                                        ×
+                                    </button>
+
+                                    <div
+                                        style={{
+                                            fontSize: "12px",
+                                            color: "#666",
+                                            fontWeight: 500,
+                                            marginBottom: "4px",
+                                            marginLeft: "40px",
+                                        }}
+                                    >
+                                        {person.name}
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "flex-end",
+                                            gap: "8px",
+                                        }}
+                                    >
+                                        <img
+                                            src={
+                                                person.profileImageSrc ||
+                                                "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                                            }
+                                            alt={person.name}
+                                            style={{
+                                                width: "32px",
+                                                height: "32px",
+                                                borderRadius: "50%",
+                                                objectFit: "cover",
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <div style={{ position: "relative", maxWidth: "70%" }}>
+                                            <button
+                                                onClick={() => editHtmlMessage(i)}
+                                                style={{
+                                                    background: "rgba(0,0,0,0)",
+                                                    border: "none",
+                                                    paddingBottom: "0px"
+                                                }}
+                                            >
+
+
+                                                <div
+                                                    ref={(el) => (messageRefs.current[i] = el)}
+                                                    dangerouslySetInnerHTML={{ __html: msg.text }} //Potential vulnerability for XSS
+                                                    onBlur={() => handleMessageBlur(i)}
+                                                    style={{
+                                                        background: person.color,
+                                                        color: "#000",
+                                                        padding: "8px 12px",
+                                                        borderRadius: "18px 18px 18px 5px",
+                                                        outline: "none",
+                                                        wordWrap: "break-word",
+                                                        display: "inline-block"
+                                                    }}
+                                                />
+                                                <BubbleTail side="left" color={person.color} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
+
                         return (
                             <div
                                 key={msg.id}
                                 style={{ marginBottom: "16px", position: "relative" }}
                                 onMouseEnter={(e) => {
                                     const deleteBtn = e.currentTarget.querySelector(".delete-btn");
+                                    const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn")
+                                    const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
                                     if (deleteBtn) deleteBtn.style.opacity = "1";
+                                    if (makeHtmlBtn) makeHtmlBtn.style.opacity = "1";
+                                    if (makeImageBtn) makeImageBtn.style.opacity = "1";
                                 }}
                                 onMouseLeave={(e) => {
                                     const deleteBtn = e.currentTarget.querySelector(".delete-btn");
+                                    const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn");
+                                    const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
                                     if (deleteBtn) deleteBtn.style.opacity = "0";
+                                    if (makeHtmlBtn) makeHtmlBtn.style.opacity = "0";
+                                    if (makeImageBtn) makeImageBtn.style.opacity = "0";
                                 }}
                             >
                                 <button
@@ -470,6 +626,68 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                     title="Delete message"
                                 >
                                     ×
+                                </button>
+
+                                <button
+                                    className="make-html-btn"
+                                    onClick={() => changeMessageToHtml(i, (msg.text == "" || msg.text == "New message...") ? "Click to edit HTML" : msg.text)}
+                                    style={{
+                                        position: "absolute",
+                                        top: "20px",
+                                        right: "30px",
+                                        background: "#39a3ff",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "50%",
+                                        width: "18px",
+                                        height: "18px",
+                                        minWidth: "18px",
+                                        minHeight: "18px",
+                                        cursor: "pointer",
+                                        fontSize: "10px",
+                                        opacity: "0",
+                                        transition: "opacity 0.2s",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        zIndex: 1,
+                                        lineHeight: "1",
+                                        padding: "0",
+                                    }}
+                                    title="Change to HTML message"
+                                >
+                                    &lt;&gt;
+                                </button>
+
+                                <button
+                                    className="make-image-btn"
+                                    onClick={() => changeMessageToImage(i)}
+                                    style={{
+                                        position: "absolute",
+                                        top: "20px",
+                                        right: "54px",
+                                        background: "#292169",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "50%",
+                                        width: "18px",
+                                        height: "18px",
+                                        minWidth: "18px",
+                                        minHeight: "18px",
+                                        cursor: "pointer",
+                                        fontSize: "10px",
+                                        opacity: "0",
+                                        transition: "opacity 0.2s",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        zIndex: 1,
+                                        lineHeight: "1",
+                                        padding: "0",
+                                    }}
+                                    title="Change to image"
+                                >
+                                    🎆
                                 </button>
 
                                 <div
