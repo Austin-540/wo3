@@ -60,6 +60,75 @@ const MessageButton = ({ i, buttonText, buttonClass, onClick, rightOffset, toolt
     )
 }
 
+const MessagePersonPicker = ({ people, addMessageFunction, type, i }) => {
+    return (
+        <div
+            style={{
+                marginBottom: "16px",
+                padding: "12px",
+                background: "#f8f9fa",
+                borderRadius: "8px",
+                border: "1px solid #e9ecef",
+            }}
+        >
+            <div>
+                <div
+                    style={{
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        color: "#666",
+                    }}
+                >
+                    Add message from:
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                    <button
+                        key={"!system"}
+                        onClick={() => type === "inline"? 
+                                addMessageFunction(i, "!system"): 
+                                addMessageFunction("!system")}
+                        style={{
+                            background: "#333",
+                            border: "none",
+                            borderRadius: "12px",
+                            padding: "4px 8px",
+                            cursor: "pointer",
+                            fontSize: "10px",
+                            color: "#EEE",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        + System Message
+                    </button>
+
+                    {people.map((person) => (
+                        <button
+                            key={person.id}
+                            onClick={() => type === "inline"? 
+                                addMessageFunction(i, person.id): 
+                                addMessageFunction(person.id)}
+                            style={{
+                                background: person.color,
+                                border: "none",
+                                borderRadius: "12px",
+                                padding: "4px 8px",
+                                cursor: "pointer",
+                                fontSize: "10px",
+                                color: "#000",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            + {person.name}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+        </div>
+    )
+}
+
+
 export const SnapchatComponent = ({ node, updateAttributes }) => {
     const { groupName, groupIcon, people, messages } = node.attrs; // ORIGINAL - No defaults!
 
@@ -717,70 +786,12 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                             </div>
                         );
                     })}
+                    
                 </div>
 
 
-                {people.length > 0 && (
-                    <div
-                        style={{
-                            marginBottom: "16px",
-                            padding: "12px",
-                            background: "#f8f9fa",
-                            borderRadius: "8px",
-                            border: "1px solid #e9ecef",
-                        }}
-                    >
-                        <div>
-                            <div
-                                style={{
-                                    fontSize: "12px",
-                                    marginBottom: "6px",
-                                    color: "#666",
-                                }}
-                            >
-                                Add message from:
-                            </div>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                                <button
-                                    key={"!system"}
-                                    onClick={() => addMessage("!system")}
-                                    style={{
-                                        background: "#333",
-                                        border: "none",
-                                        borderRadius: "12px",
-                                        padding: "4px 8px",
-                                        cursor: "pointer",
-                                        fontSize: "10px",
-                                        color: "#EEE",
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    + System Message
-                                </button>
-
-                                {people.map((person) => (
-                                    <button
-                                        key={person.id}
-                                        onClick={() => addMessage(person.id)}
-                                        style={{
-                                            background: person.color,
-                                            border: "none",
-                                            borderRadius: "12px",
-                                            padding: "4px 8px",
-                                            cursor: "pointer",
-                                            fontSize: "10px",
-                                            color: "#000",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        + {person.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                    </div>
-                )}
+                {people.length > 0 && 
+                <MessagePersonPicker people={people} addMessageFunction={addMessage} type="end"/>}
             </div>
         </NodeViewWrapper>
     );
