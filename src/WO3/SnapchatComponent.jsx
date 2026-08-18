@@ -28,7 +28,7 @@ const BubbleTail = ({ side, color }) => {
 const MessageButton = ({ i, buttonText, buttonClass, onClick, rightOffset, tooltip, color }) => {
     return (
         <button
-            className={buttonClass}
+            className={`${buttonClass} message-action-btn`}
             onClick={() => onClick(i)}
             style={{
                 position: "absolute",
@@ -707,28 +707,17 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                 key={msg.id}
                                 style={{ marginBottom: "16px", position: "relative" }}
                                 onMouseEnter={(e) => {
-                                    const deleteBtn = e.currentTarget.querySelector(".delete-btn");
-                                    const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn")
-                                    const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
-                                    const makeTypingIndicatorBtn = e.currentTarget.querySelector(".make-typing-indicator-btn");
-                                    const addMessageBelowBtn = e.currentTarget.querySelector(".add-message-below-btn");
-                                    if (deleteBtn) deleteBtn.style.opacity = "1";
-                                    if (makeHtmlBtn) makeHtmlBtn.style.opacity = "1";
-                                    if (makeImageBtn) makeImageBtn.style.opacity = "1";
-                                    if (makeTypingIndicatorBtn) makeTypingIndicatorBtn.style.opacity = "1";
-                                    if (addMessageBelowBtn) addMessageBelowBtn.style.opacity = "1";
+                                    const actionButtons = e.currentTarget.querySelectorAll(".message-action-btn");
+                                    actionButtons.forEach((button) => {
+                                        if (button) button.style.opacity = "1";
+                                    })
+                                    
                                 }}
                                 onMouseLeave={(e) => {
-                                    const deleteBtn = e.currentTarget.querySelector(".delete-btn");
-                                    const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn");
-                                    const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
-                                    const makeTypingIndicatorBtn = e.currentTarget.querySelector(".make-typing-indicator-btn");
-                                    const addMessageBelowBtn = e.currentTarget.querySelector(".add-message-below-btn");
-                                    if (deleteBtn) deleteBtn.style.opacity = "0";
-                                    if (makeHtmlBtn) makeHtmlBtn.style.opacity = "0";
-                                    if (makeImageBtn) makeImageBtn.style.opacity = "0";
-                                    if (makeTypingIndicatorBtn) makeTypingIndicatorBtn.style.opacity = "0";
-                                    if (addMessageBelowBtn) addMessageBelowBtn.style.opacity = "0";
+                                    const actionButtons = e.currentTarget.querySelectorAll(".message-action-btn");
+                                    actionButtons.forEach((button) => {
+                                        if (button) button.style.opacity = "0";
+                                    })
                                 }}
                             >
                                 <MessageButton
