@@ -287,7 +287,42 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
     }
 
     const changeMessageToTypingIndicator = (i) => {
-        changeMessageToHtml(i, '<div class="typing-indicator-container" style="display: flex;justify-content: space-around;align-items: center;width: 80px;height:40px;"><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div></div>'); 
+        changeMessageToHtml(i, '<div class="typing-indicator-container" style="display: flex;justify-content: space-around;align-items: center;width: 80px;height:40px;"><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div><div class="typing-indicator-circle" style="width: 15px;height: 15px;background-color: #FFF;border-radius: 50%;"></div></div>');
+    }
+
+    const addMessageAfterIndex = (i, personId) => {
+        const insertPosition = i + 1;
+
+        updateAttributes({
+            messages: [
+                ...messages.slice(0, i),
+                { personId: messages[i].personId, text: messages[i].text, id: messages[i].id, useHtml: messages[i].useHtml, showNewMessagePersonPickerAfter: false},
+                // Hide the person picker now that a new message has been inserted
+
+                { personId, text: "New message...", id: crypto.randomUUID(), useHtml: false },
+                ...messages.slice(insertPosition)
+            ]
+        });
+
+        console.log(messages);
+
+    }
+
+    const showNewMessagePersonPicker = (i) => {
+        updateAttributes({
+            messages: messages.map((msg, j) => {
+                if (i === j) {
+                    return {
+                        personId: msg.personId,
+                        text: msg.text,
+                        id: msg.id,
+                        useHtml: msg.useHtml,
+                        showNewMessagePersonPickerAfter: true
+                    };
+                }
+                return msg
+            })
+        })
     }
 
     return (
@@ -676,20 +711,24 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                     const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn")
                                     const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
                                     const makeTypingIndicatorBtn = e.currentTarget.querySelector(".make-typing-indicator-btn");
+                                    const addMessageBelowBtn = e.currentTarget.querySelector(".add-message-below-btn");
                                     if (deleteBtn) deleteBtn.style.opacity = "1";
                                     if (makeHtmlBtn) makeHtmlBtn.style.opacity = "1";
                                     if (makeImageBtn) makeImageBtn.style.opacity = "1";
                                     if (makeTypingIndicatorBtn) makeTypingIndicatorBtn.style.opacity = "1";
+                                    if (addMessageBelowBtn) addMessageBelowBtn.style.opacity = "1";
                                 }}
                                 onMouseLeave={(e) => {
                                     const deleteBtn = e.currentTarget.querySelector(".delete-btn");
                                     const makeHtmlBtn = e.currentTarget.querySelector(".make-html-btn");
                                     const makeImageBtn = e.currentTarget.querySelector(".make-image-btn");
                                     const makeTypingIndicatorBtn = e.currentTarget.querySelector(".make-typing-indicator-btn");
+                                    const addMessageBelowBtn = e.currentTarget.querySelector(".add-message-below-btn");
                                     if (deleteBtn) deleteBtn.style.opacity = "0";
                                     if (makeHtmlBtn) makeHtmlBtn.style.opacity = "0";
                                     if (makeImageBtn) makeImageBtn.style.opacity = "0";
                                     if (makeTypingIndicatorBtn) makeTypingIndicatorBtn.style.opacity = "0";
+                                    if (addMessageBelowBtn) addMessageBelowBtn.style.opacity = "0";
                                 }}
                             >
                                 <MessageButton
@@ -729,6 +768,16 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                     buttonClass="make-typing-indicator-btn"
                                     tooltip="Change to typing indicator"
                                     buttonText="💬"
+                                    i={i}
+                                />
+
+                                <MessageButton
+                                    color="#EEE"
+                                    onClick={showNewMessagePersonPicker}
+                                    rightOffset="96px"
+                                    buttonClass="add-message-below-btn"
+                                    tooltip="Add a new message below"
+                                    buttonText="⬇️"
                                     i={i}
                                 />
 
@@ -783,7 +832,10 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                         <BubbleTail side="left" color={person.color} />
                                     </div>
                                 </div>
-                            </div>
+                                {
+                                    msg.showNewMessagePersonPickerAfter && <MessagePersonPicker people={people} addMessageFunction={addMessageAfterIndex} i={i} type="inline"/>
+                                }
+                            </div>      
                         );
                     })}
                     
