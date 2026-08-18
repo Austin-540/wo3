@@ -82,7 +82,8 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         messages.forEach((msg, i) => {
             if (
                 messageRefs.current[i] &&
-                messageRefs.current[i].innerText !== msg.text
+                messageRefs.current[i].innerText !== msg.text &&
+                !msg.useHtml
             ) {
                 messageRefs.current[i].innerText = msg.text;
             }
@@ -192,8 +193,6 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
     }
 
     const changeMessageToHtml = (i, newHtml) => {
-
-
         updateAttributes({
             messages: messages.map((msg, j) => {
                 if (i === j) {
