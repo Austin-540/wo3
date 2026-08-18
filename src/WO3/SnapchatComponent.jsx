@@ -24,6 +24,41 @@ const BubbleTail = ({ side, color }) => {
     );
 };
 
+const MessageButton = ({ i, buttonText, buttonClass, onClick, rightOffset, tooltip, color }) => {
+    return (
+        <button
+            className={buttonClass}
+            onClick={() => onClick(i)}
+            style={{
+                position: "absolute",
+                top: "20px",
+                right: rightOffset,
+                background: color,
+                color: "white",
+                border: "none",
+                borderRadius: "50%",
+                width: "18px",
+                height: "18px",
+                minWidth: "18px",
+                minHeight: "18px",
+                cursor: "pointer",
+                fontSize: "10px",
+                opacity: "0",
+                transition: "opacity 0.2s",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 1,
+                lineHeight: "1",
+                padding: "0",
+            }}
+            title={tooltip}
+        >
+            {buttonText}
+        </button>
+    )
+}
+
 export const SnapchatComponent = ({ node, updateAttributes }) => {
     const { groupName, groupIcon, people, messages } = node.attrs; // ORIGINAL - No defaults!
 
@@ -155,13 +190,14 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
         })
     }
 
-    const changeMessageToHtml = (i, newHtml) => {
+    const changeMessageToHtml = (i) => {
         updateAttributes({
             messages: messages.map((msg, j) => {
                 if (i === j) {
                     return {
                         personId: msg.personId,
-                        text: newHtml,
+                        text: (msg.text === "" || msg.text === "New message...") ? 
+                            "Click to edit HTML": msg.text,
                         id: msg.id,
                         useHtml: true
                     };
@@ -479,36 +515,15 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                         if (deleteBtn) deleteBtn.style.opacity = "0";
                                     }}
                                 >
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() => removeMessage(i)}
-                                        style={{
-                                            position: "absolute",
-                                            top: "20px",
-                                            right: "8px",
-                                            background: "#ff4444",
-                                            color: "white",
-                                            border: "none",
-                                            borderRadius: "50%",
-                                            width: "18px",
-                                            height: "18px",
-                                            minWidth: "18px",
-                                            minHeight: "18px",
-                                            cursor: "pointer",
-                                            fontSize: "10px",
-                                            opacity: "0",
-                                            transition: "opacity 0.2s",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            zIndex: 1,
-                                            lineHeight: "1",
-                                            padding: "0",
-                                        }}
-                                        title="Delete message"
-                                    >
-                                        ×
-                                    </button>
+                                    <MessageButton
+                                        color="#FF4444"
+                                        onClick={removeMessage}
+                                        rightOffset="8px"
+                                        buttonClass="delete-btn"
+                                        tooltip="Delete message"
+                                        buttonText="×"
+                                        i={i}
+                                    />
 
                                     <div
                                         style={{
@@ -576,7 +591,7 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                             );
                         }
 
-                        return (
+                        return ( // non-html non-system messages
                             <div
                                 key={msg.id}
                                 style={{ marginBottom: "16px", position: "relative" }}
@@ -597,98 +612,35 @@ export const SnapchatComponent = ({ node, updateAttributes }) => {
                                     if (makeImageBtn) makeImageBtn.style.opacity = "0";
                                 }}
                             >
-                                <button
-                                    className="delete-btn"
-                                    onClick={() => removeMessage(i)}
-                                    style={{
-                                        position: "absolute",
-                                        top: "20px",
-                                        right: "8px",
-                                        background: "#ff4444",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "50%",
-                                        width: "18px",
-                                        height: "18px",
-                                        minWidth: "18px",
-                                        minHeight: "18px",
-                                        cursor: "pointer",
-                                        fontSize: "10px",
-                                        opacity: "0",
-                                        transition: "opacity 0.2s",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        zIndex: 1,
-                                        lineHeight: "1",
-                                        padding: "0",
-                                    }}
-                                    title="Delete message"
-                                >
-                                    ×
-                                </button>
+                                <MessageButton
+                                    color="#FF4444"
+                                    onClick={removeMessage}
+                                    rightOffset="8px"
+                                    buttonClass="delete-btn"
+                                    tooltip="Delete message"
+                                    buttonText="×"
+                                    i={i}
+                                />
 
-                                <button
-                                    className="make-html-btn"
-                                    onClick={() => changeMessageToHtml(i, (msg.text == "" || msg.text == "New message...") ? "Click to edit HTML" : msg.text)}
-                                    style={{
-                                        position: "absolute",
-                                        top: "20px",
-                                        right: "30px",
-                                        background: "#39a3ff",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "50%",
-                                        width: "18px",
-                                        height: "18px",
-                                        minWidth: "18px",
-                                        minHeight: "18px",
-                                        cursor: "pointer",
-                                        fontSize: "10px",
-                                        opacity: "0",
-                                        transition: "opacity 0.2s",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        zIndex: 1,
-                                        lineHeight: "1",
-                                        padding: "0",
-                                    }}
-                                    title="Change to HTML message"
-                                >
-                                    &lt;&gt;
-                                </button>
+                                <MessageButton
+                                    color="#39A3FF"
+                                    onClick={changeMessageToHtml}
+                                    rightOffset="30px"
+                                    buttonClass="make-html-btn"
+                                    tooltip="Change to HTML message"
+                                    buttonText="&lt;&gt;"
+                                    i={i}
+                                />
 
-                                <button
-                                    className="make-image-btn"
-                                    onClick={() => changeMessageToImage(i)}
-                                    style={{
-                                        position: "absolute",
-                                        top: "20px",
-                                        right: "54px",
-                                        background: "#292169",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "50%",
-                                        width: "18px",
-                                        height: "18px",
-                                        minWidth: "18px",
-                                        minHeight: "18px",
-                                        cursor: "pointer",
-                                        fontSize: "10px",
-                                        opacity: "0",
-                                        transition: "opacity 0.2s",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        zIndex: 1,
-                                        lineHeight: "1",
-                                        padding: "0",
-                                    }}
-                                    title="Change to image"
-                                >
-                                    🎆
-                                </button>
+                                <MessageButton
+                                    color="#292169"
+                                    onClick={changeMessageToImage}
+                                    rightOffset="54px"
+                                    buttonClass="make-image-btn"
+                                    tooltip="Change to image"
+                                    buttonText="🎆"
+                                    i={i}
+                                />
 
                                 <div
                                     style={{
