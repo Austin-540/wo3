@@ -1,6 +1,7 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { SnapchatComponent } from "./SnapchatComponent";
+import DOMPurify from "dompurify";
 
 function getPerson(personId, people) {
     if (personId === "!system") return { id: "!system", name: "System", color: "#000", profileImageSrc: "" };
@@ -116,6 +117,19 @@ export const SnapchatExtension = Node.create({
                     ],
                 ]
 
+                let messageContent = msg.text;
+
+                if (msg.useHtml) {
+                    if (typeof document !== "undefined") { // I'm not actually sure if this could be undefined, but it probably doesn't hurt to check
+                        const htmlMessageDiv = document.createElement("div");
+                        htmlMessageDiv.className = "html-message-container";
+                        htmlMessageDiv.innerHTML = DOMPurify.sanitize(msg.text);
+                        messageContent = htmlMessageDiv;
+                    } else {
+                        messageContent = DOMPurify.sanitize(msg.text);
+                    }
+                }
+
                 return [
                     "div",
                     { class: "sc-message-container" },
@@ -139,7 +153,7 @@ export const SnapchatExtension = Node.create({
                                 class: "sc-msg-bubble",
                                 style: `background-color: ${person.color}`,
                             },
-                            msg.text,
+                            messageContent,
                         ],
                     ],
                 ];
